@@ -1,0 +1,19 @@
+.header {
+  width: 100%;
+  background-color: gray;
+}
+
+.header ul {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.header li {
+  color: white;
+  list-style-type: none;
+}
+
+.header li:hover {
+  color: wheat;
+}
