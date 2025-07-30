@@ -7,9 +7,6 @@ export default async function NewDetailsPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-
-  if (!slug) notFound();
-
   const newItem = DUMMY_NEWS.find((newItem) => newItem.slug === slug);
 
   if (!newItem) notFound();
