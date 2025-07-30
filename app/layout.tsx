@@ -1,4 +1,5 @@
 import React from "react";
+
 import "./globals.css";
 import MainHeader from "@/components/main-header/main-header";
 
@@ -15,8 +16,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <MainHeader />
-        {children}
+        <div id="page">
+          <MainHeader />
+          {children}
+        </div>
       </body>
     </html>
   );
