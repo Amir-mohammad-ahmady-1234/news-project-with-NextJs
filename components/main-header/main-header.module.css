@@ -6,14 +6,18 @@
 .header ul {
   display: flex;
   align-items: center;
-  justify-content: space-around;
+  justify-content: space-evenly;
+}
+
+.header li a {
+  text-decoration: none;
+  color: white;
 }
 
 .header li {
-  color: white;
   list-style-type: none;
 }
 
-.header li:hover {
+.header li a:hover {
   color: wheat;
 }
