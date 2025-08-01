@@ -1,12 +1,13 @@
 import { DUMMY_NEWS } from "@/dummy-news";
 import { notFound } from "next/navigation";
+import { use } from "react";
 
 interface Props {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }
 
-export default async function ImagePage({ params }: Props) {
-  const { slug } = params;
+export default function ImagePage({ params }: Props) {
+  const { slug } = use(params);
 
   const newItem = DUMMY_NEWS.find((newItem) => newItem.slug === slug);
   if (!newItem) notFound();
