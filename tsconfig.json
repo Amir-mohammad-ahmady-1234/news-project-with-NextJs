@@ -28,6 +28,6 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "app/(content)/archive/@latest/default.tsx"
-  ],
+, "backend/app.ts"  ],
   "exclude": ["node_modules"]
 }
