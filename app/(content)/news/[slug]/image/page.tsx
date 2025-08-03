@@ -1,15 +1,16 @@
-import { DUMMY_NEWS } from "@/dummy-news";
+import { getNewsItem } from "@/lib/news";
+import { NewsItem } from "@/types/news-type";
 import { notFound } from "next/navigation";
-import { use } from "react";
 
 interface Props {
   params: Promise<{ slug: string }>;
 }
 
-export default function ImagePage({ params }: Props) {
-  const { slug } = use(params);
+export default async function ImagePage({ params }: Props) {
+  const { slug } = await params;
 
-  const newItem = DUMMY_NEWS.find((newItem) => newItem.slug === slug);
+  const newItem = (await getNewsItem(slug)) as NewsItem;
+
   if (!newItem) notFound();
 
   return (

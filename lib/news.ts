@@ -1,67 +1,73 @@
-// فرض می‌کنیم DUMMY_NEWS آرایه‌ای از NewsItem است
-import { DUMMY_NEWS } from "@/dummy-news";
-import { NewsItem } from "@/types/news-type";
+import sql from "better-sqlite3";
 
-// دریافت تمام اخبار
-export function getAllNews(): NewsItem[] {
-  return DUMMY_NEWS;
+const db = sql("data.db");
+
+export async function getAllNews() {
+  const news = db.prepare("SELECT * FROM news").all();
+  await new Promise((resolve) => setTimeout(resolve, 2000));
+  return news;
 }
 
-// دریافت سه خبر آخر
-export function getLatestNews(): NewsItem[] {
-  return DUMMY_NEWS.slice(0, 3);
+export async function getNewsItem(slug: string) {
+  const newsItem = db.prepare("SELECT * FROM news WHERE slug = ?").get(slug);
+
+  await new Promise((resolve) => setTimeout(resolve, 2000));
+
+  return newsItem;
 }
 
-// دریافت سال‌های موجود در اخبار
-export function getAvailableNewsYears(): number[] {
-  return [
-    ...new Set(DUMMY_NEWS.map((news) => new Date(news.date).getFullYear())),
-  ].sort((a, b) => b - a);
+export async function getLatestNews() {
+  const latestNews = db
+    .prepare("SELECT * FROM news ORDER BY date DESC LIMIT 3")
+    .all();
+  await new Promise((resolve) => setTimeout(resolve, 2000));
+  return latestNews;
 }
 
-// دریافت ماه‌های موجود برای یک سال مشخص
-export function getAvailableNewsMonths(year: number | string): number[] {
-  const parsedYear = typeof year === "string" ? parseInt(year, 10) : year;
-  if (isNaN(parsedYear)) {
-    throw new Error("Invalid year provided");
-  }
+export async function getAvailableNewsYears() {
+  const rows = db
+    .prepare("SELECT DISTINCT strftime('%Y', date) as year FROM news")
+    .all() as { year: string }[];
 
-  return [
-    ...new Set(
-      DUMMY_NEWS.filter(
-        (news) => new Date(news.date).getFullYear() === parsedYear
-      ).map((news) => new Date(news.date).getMonth() + 1)
-    ),
-  ].sort((a, b) => b - a);
+  const years = rows.map((row) => row.year);
+
+  await new Promise((resolve) => setTimeout(resolve, 2000));
+
+  return years;
 }
 
-// دریافت اخبار برای یک سال مشخص
-export function getNewsForYear(year: number | string): NewsItem[] {
-  const parsedYear = typeof year === "string" ? parseInt(year, 10) : year;
-  if (isNaN(parsedYear)) {
-    throw new Error("Invalid year provided");
-  }
+export function getAvailableNewsMonths(year: string) {
+  const rows = db
+    .prepare(
+      "SELECT DISTINCT strftime('%m', date) as month FROM news WHERE strftime('%Y', date) = ?"
+    )
+    .all(year) as { month: string }[];
 
-  return DUMMY_NEWS.filter(
-    (news) => new Date(news.date).getFullYear() === parsedYear
-  );
+  const months = rows.map((row) => row.month);
+
+  return months;
 }
 
-// دریافت اخبار برای یک سال و ماه مشخص
-export function getNewsForYearAndMonth(
-  year: number | string,
-  month: number | string
-): NewsItem[] {
-  const parsedYear = typeof year === "string" ? parseInt(year, 10) : year;
-  const parsedMonth = typeof month === "string" ? parseInt(month, 10) : month;
+export async function getNewsForYear(year: string) {
+  const news = db
+    .prepare(
+      "SELECT * FROM news WHERE strftime('%Y', date) = ? ORDER BY date DESC"
+    )
+    .all(year);
 
-  if (isNaN(parsedYear) || isNaN(parsedMonth)) {
-    throw new Error("Invalid year or month provided");
-  }
+  await new Promise((resolve) => setTimeout(resolve, 2000));
 
-  return DUMMY_NEWS.filter((news) => {
-    const newsYear = new Date(news.date).getFullYear();
-    const newsMonth = new Date(news.date).getMonth() + 1;
-    return newsYear === parsedYear && newsMonth === parsedMonth;
-  });
+  return news;
+}
+
+export async function getNewsForYearAndMonth(year: string, month: string) {
+  const news = db
+    .prepare(
+      "SELECT * FROM news WHERE strftime('%Y', date) = ? AND strftime('%m', date) = ? ORDER BY date DESC"
+    )
+    .all(year, month);
+
+  await new Promise((resolve) => setTimeout(resolve, 2000));
+
+  return news;
 }
